@@ -42,9 +42,9 @@ class LogoutStore
                 'CREATE TABLE '.$store->prefix.'_saml_LogoutStore_new (_authSource VARCHAR(255) NOT NULL,'.
                 '_nameId VARCHAR(40) NOT NULL, _sessionIndex VARCHAR(50) NOT NULL, _expire TIMESTAMP NOT NULL,'.
                 '_sessionId VARCHAR(50) NOT NULL, UNIQUE (_authSource, _nameID, _sessionIndex))',
-                'INSERT INTO '.$this->prefix.'_saml_LogoutStore_new SELECT * FROM '.$this->prefix.'_saml_LogoutStore',
-                'DROP TABLE '.$this->prefix.'_saml_LogoutStore',
-                'ALTER TABLE '.$this->prefix.'_saml_LogoutStore_new RENAME TO '.$this->prefix.'_saml_LogoutStore',
+                'INSERT INTO '.$store->prefix.'_saml_LogoutStore_new SELECT * FROM '.$store->prefix.'_saml_LogoutStore',
+                'DROP TABLE '.$store->prefix.'_saml_LogoutStore',
+                'ALTER TABLE '.$store->prefix.'_saml_LogoutStore_new RENAME TO '.$store->prefix.'_saml_LogoutStore',
                 'CREATE INDEX '.$store->prefix.'_saml_LogoutStore_expire ON '.$store->prefix.'_saml_LogoutStore (_expire)',
                 'CREATE INDEX '.$store->prefix.'_saml_LogoutStore_nameId ON '.$store->prefix.'_saml_LogoutStore (_authSource, _nameId)'
             ];
