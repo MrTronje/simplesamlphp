@@ -29,21 +29,30 @@ class LogoutStore
         if ($tableVer === 2) {
             return;
         } elseif ($tableVer === 1) {
-            // TableVersion 2 increased the column size to 255 which is the maximum length of a FQDN
-            switch ($store->driver) {
-                case 'pgsql':
-                    // This does not affect the NOT NULL constraint
-                    $query = 'ALTER TABLE '.$store->prefix.
-                        '_saml_LogoutStore ALTER COLUMN _authSource TYPE VARCHAR(255)';
-                    break;
-                default:
-                    $query = 'ALTER TABLE '.$store->prefix.
-                        '_saml_LogoutStore MODIFY _authSource VARCHAR(255) NOT NULL';
-                    break;
-            }
+            /**
+             * TableVersion 2 increased the column size to 255 which is the maximum length of a FQDN
+             * Because SQLite does not support field alterations, the approach is to:
+             *     Create a new table without the proper column size
+             *     Copy the current data to the new table
+             *     Drop the old table
+             *     Rename the new table correctly
+             *     Readd the index
+             */
+            $update = [
+                'CREATE TABLE '.$store->prefix.'_saml_LogoutStore_new (_authSource VARCHAR(255) NOT NULL,'.
+                '_nameId VARCHAR(40) NOT NULL, _sessionIndex VARCHAR(50) NOT NULL, _expire TIMESTAMP NOT NULL,'.
+                '_sessionId VARCHAR(50) NOT NULL, UNIQUE (_authSource, _nameID, _sessionIndex))',
+                'INSERT INTO '.$this->prefix.'_saml_LogoutStore_new SELECT * FROM '.$this->prefix.'_saml_LogoutStore',
+                'DROP TABLE '.$this->prefix.'_saml_LogoutStore',
+                'ALTER TABLE '.$this->prefix.'_saml_LogoutStore_new RENAME TO '.$this->prefix.'_saml_LogoutStore',
+                'CREATE INDEX '.$store->prefix.'_saml_LogoutStore_expire ON '.$store->prefix.'_saml_LogoutStore (_expire)',
+                'CREATE INDEX '.$store->prefix.'_saml_LogoutStore_nameId ON '.$store->prefix.'_saml_LogoutStore (_authSource, _nameId)'
+            ];
 
             try {
-                $store->pdo->exec($query);
+                foreach ($update as $query) {
+                    $store->pdo->exec($query);
+                }
             } catch (\Exception $e) {
                 Logger::warning('Database error: '.var_export($store->pdo->errorInfo(), true));
                 return;
