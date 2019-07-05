@@ -98,7 +98,7 @@ if (!empty($_REQUEST['username']) || !empty($password)) {
 }
 
 $globalConfig = \SimpleSAML\Configuration::getInstance();
-$t = new \SimpleSAML\XHTML\Template($globalConfig, 'core:loginuserpass.php');
+$t = new \SimpleSAML\XHTML\Template($globalConfig, 'core:loginuserpass.tpl.php');
 $t->data['stateparams'] = ['AuthState' => $authStateId];
 if (array_key_exists('forcedUsername', $state)) {
     $t->data['username'] = $state['forcedUsername'];
