@@ -15,14 +15,17 @@ if (!array_key_exists('AuthState', $_REQUEST)) {
 }
 $authStateId = $_REQUEST['AuthState'];
 $state = \SimpleSAML\Auth\State::loadState($authStateId, \SimpleSAML\Module\core\Auth\UserPassBase::STAGEID);
+if ($state === null) {
+    throw new \SimpleSAML\Error\NoState();
+}
 
+/** @var \SimpleSAML\Module\core\Auth\UserPassBase|null $source */
 $source = \SimpleSAML\Auth\Source::getById($state[\SimpleSAML\Module\core\Auth\UserPassBase::AUTHID]);
 if ($source === null) {
     throw new \Exception(
         'Could not find authentication source with id '.$state[\SimpleSAML\Module\core\Auth\UserPassBase::AUTHID]
     );
 }
-
 
 if (array_key_exists('username', $_REQUEST)) {
     $username = $_REQUEST['username'];
