@@ -6,6 +6,7 @@
 >
     <projectFiles>
         <directory name="lib/SimpleSAML/Utils" />
+        <directory name="modules/admin" />
     </projectFiles>
 
     <issueHandlers>
