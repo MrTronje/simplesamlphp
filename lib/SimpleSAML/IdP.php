@@ -164,7 +164,7 @@ class IdP
     /**
      * Retrieve the configuration for this IdP.
      *
-     * @return Configuration|null The configuration object.
+     * @return Configuration The configuration object.
      */
     public function getConfig()
     {
