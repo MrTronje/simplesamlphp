@@ -47,9 +47,9 @@ class IdP
     /**
      * The configuration for this IdP.
      *
-     * @var Configuration|null
+     * @var Configuration
      */
-    private $config = null;
+    private $config;
 
     /**
      * Our authsource.
