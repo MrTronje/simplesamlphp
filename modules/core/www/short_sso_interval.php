@@ -12,6 +12,10 @@ if (!array_key_exists('StateId', $_REQUEST)) {
 }
 $id = $_REQUEST['StateId'];
 $state = \SimpleSAML\Auth\State::loadState($id, 'core:short_sso_interval');
+if ($state === null) {
+    throw new \SimpleSAML\Error\NoState();
+}
+
 $session = \SimpleSAML\Session::getSessionFromRequest();
 
 if (array_key_exists('continue', $_REQUEST)) {

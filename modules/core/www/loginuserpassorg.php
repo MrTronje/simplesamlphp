@@ -16,6 +16,7 @@ if (!array_key_exists('AuthState', $_REQUEST)) {
 $authStateId = $_REQUEST['AuthState'];
 $state = \SimpleSAML\Auth\State::loadState($authStateId, \SimpleSAML\Module\core\Auth\UserPassOrgBase::STAGEID);
 
+/** @var \SimpleSAML\Module\core\Auth\UserPassOrgBase $source */
 $source = \SimpleSAML\Auth\Source::getById($state[\SimpleSAML\Module\core\Auth\UserPassOrgBase::AUTHID]);
 if ($source === null) {
     throw new \Exception(
